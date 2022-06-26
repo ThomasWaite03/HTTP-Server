@@ -63,8 +63,10 @@ const STATUS_NAMES = {
 }
 
 module.exports = {
-  PORT: 8080,
   SERVER_NAME: 'Awesome Server',
+  PORT: 8080,
+  SECURE_PORT: 443,
+  IS_SECURE: true,
   MIME_TYPES,
   STATUS_NAMES
 };

@@ -1,10 +1,16 @@
 const net = require('net');
+const tls = require('tls');
 const fs = require('fs');
-const config = require('./config');
-const responseBuilder = require('./response');
+const config = require('./source/config');
+const responseBuilder = require('./source/response');
 
-const server = net.createServer((socket) => {
 
+var options = {
+  key: fs.readFileSync('cryptography/private-key.pem'),
+  cert: fs.readFileSync('cryptography/public-cert.pem')
+};
+
+function socketHandler(socket) {
   // Receive data
   socket.on('data', (data) => {
     data = String(data);
@@ -63,9 +69,12 @@ const server = net.createServer((socket) => {
   // Handle errors here
   socket.on('error', (error) => {
     console.log(error);
-  })
-});
+  });
+};
+
+// If secure setting is true, create a connection using tls, otherwise just use http
+const server = config.IS_SECURE ? tls.createServer(options, socketHandler) : net.createServer(socketHandler);
 
 // Keep listening on the port
-server.listen(config.PORT);
+server.listen(config.IS_SECURE ? config.SECURE_PORT : config.PORT);
 console.log('Listening...');

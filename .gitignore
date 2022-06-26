@@ -1,8 +1,7 @@
 *.html
-*.css
-*.jpg
-*.jpeg
-*.png
-*.webp
-*.ico
-*.gif
+
+cryptography/*
+!cryptography/.gitkeep
+
+res/*
+!res/.gitkeep
