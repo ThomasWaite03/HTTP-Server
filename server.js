@@ -20,26 +20,35 @@ const server = net.createServer((socket) => {
 
     let responseData = null;
     let statusCode = 200;
+    let encoding = "utf-8"
 
     if (extension === null) {
       // If not getting a file, then redirect to a backend function
       console.log('Call to backend function or api endpoint.');
     } else {
       // If getting a file, retrieve it
+      encoding = config.MIME_TYPES[extension] ? config.MIME_TYPES[extension].encoding : encoding;
       try {
-        responseData = fs.readFileSync('./' + url, 'utf8');
-        console.log(responseData);
+        responseData = fs.readFileSync('./' + url, encoding);
       } catch (error) {
-        console.error(error);
         if (error.code === 'ENOENT') {
           statusCode = 404;
+        } else {
+          console.log(error);
         }
       }
     }
 
-    const mimeType = config.MIME_TYPES[extension] || 'application/json';
-    const resp = responseBuilder.createResponse(statusCode, responseData, mimeType);
-    socket.end(resp.stringify());
+    const mimeType = config.MIME_TYPES[extension] ? config.MIME_TYPES[extension].subtype : null;
+    const resp = responseBuilder.createResponse(statusCode, responseData, encoding, mimeType);
+
+    if (resp.body){
+      socket.write(resp.getHeaderString());
+      socket.end(resp.body, encoding);
+    } else {
+      socket.end(resp.getHeaderString());
+    }
+
   });
 
   // Handle closing connections
@@ -53,7 +62,7 @@ const server = net.createServer((socket) => {
 
   // Handle errors here
   socket.on('error', (error) => {
-    console.log(`ERROR: ${error}`);
+    console.log(error);
   })
 });
 

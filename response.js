@@ -1,13 +1,13 @@
 const config = require('./config');
 
 module.exports = {
-  createResponse: function(statusCode, body = null, contentType = null) {
+  createResponse: function(statusCode, body = null, encoding = 'utf-8', contentType = null) {
     const response = {
       headers: {
         Connection: "Closed",
         Server: `${config.SERVER_NAME}`
       },
-      stringify: function() {
+      getHeaderString: function() {
         let headersText = [];
         Object.entries(this.headers).forEach(([key, value]) => {
           headersText.push(`${key}: ${value}`);
@@ -18,9 +18,13 @@ module.exports = {
         headersText.unshift(statusLine);
         headersText = headersText.join('\r\n') + '\r\n\r\n';
 
-        return headersText + (this.body || '');
+        return headersText;
       }
     };
+
+    if (!contentType) {
+      statusCode = 406;
+    }
 
     // If error occurred
     if (statusCode >= 300) {
@@ -30,13 +34,13 @@ module.exports = {
     }
 
     if (body) {
-      if (typeof body === 'object' && contentType === 'application/json') {
+      if (typeof body === 'object' && !(body instanceof Buffer) && contentType === 'application/json') {
         response.body = JSON.stringify(body);
       } else {
         response.body = body;
       }
 
-      response.headers["Content-Type"] = `${contentType || 'text/plain'}; charset=${config.ENCODING}`;
+      response.headers["Content-Type"] = `${contentType || 'text/plain'}; charset=${encoding}`;
       response.headers["Content-Length"] = response.body.length;
     }
 
