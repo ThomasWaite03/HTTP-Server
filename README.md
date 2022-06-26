@@ -7,7 +7,13 @@ The server serves static files from the directory where it runs. Next steps incl
 
 Supported MIME types for static file hosting
 -----------
-* HTML
-* CSS
-* JavaScript
-* Plain text
+* text/html
+* text/css
+* text/javascript
+* text/plain
+* image/jpeg
+* image/png
+* image/gif
+* image/svg+xml
+* image/webp
+* image/x-icon
