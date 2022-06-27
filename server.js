@@ -6,8 +6,8 @@ const responseBuilder = require('./source/response');
 
 
 var options = {
-  key: fs.readFileSync('cryptography/private-key.pem'),
-  cert: fs.readFileSync('cryptography/public-cert.pem')
+  key: fs.readFileSync(`cryptography/${config.PRIVATE_KEY_FILENAME}`),
+  cert: fs.readFileSync(`cryptography/${config.CERTIFICATE_FILENAME}`)
 };
 
 function socketHandler(socket) {

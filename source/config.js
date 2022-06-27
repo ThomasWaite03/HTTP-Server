@@ -64,9 +64,11 @@ const STATUS_NAMES = {
 
 module.exports = {
   SERVER_NAME: 'Awesome Server',
-  PORT: 8080,
+  PORT: 80,
   SECURE_PORT: 443,
   IS_SECURE: true,
   MIME_TYPES,
-  STATUS_NAMES
+  STATUS_NAMES,
+  PRIVATE_KEY_FILENAME: "private-key.pem",
+  CERTIFICATE_FILENAME: "public-cert.pem"
 };
